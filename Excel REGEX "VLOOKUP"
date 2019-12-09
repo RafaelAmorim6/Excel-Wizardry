@@ -1,0 +1,135 @@
+Function REGEXFINAL(original As String, identifica As Range) As String
+    
+    Dim ExpRegular As New RegExp 'biblioteca VBSCRIPT REGULAR EXPRESSIONS 5.5
+    Dim contador As Integer
+    Dim tamanho As Integer ' Tamanho do dicionario - define X execucoes do loop
+    Dim retorno As String  ' recebe a string da base da Claro
+    
+    tamanho = (identifica.Count / 2) '| passagem de valor Ok
+    retorno = original '| passagem de valor Ok
+        
+    ExpRegular.Global = True '| atributo biblioteca regex Ok
+    ExpRegular.MultiLine = True '| atributo biblioteca regex Ok
+    ExpRegular.IgnoreCase = False '| atributo biblioteca regex Ok
+    ExpRegular.Pattern = "" '| atributo biblioteca regex Ok
+    'identifica.Cells(contador, 1).Value | referencia de celula em range Ok
+    
+    For contador = 1 To tamanho
+        'If identifica.Cells(contador, 1).Value = "" Then Exit Do
+        ExpRegular.Pattern = identifica.Cells(contador, 1).Value
+        If ExpRegular.Test(retorno) Then ' | verifica se ha match Ok
+        retorno = ExpRegular.Replace(retorno, identifica.Cells(contador, 2).Value)
+        End If
+    
+    Next contador
+    
+    REGEXFINAL = retorno
+    
+End Function
+
+Function FINDthings(strInput As String, PowerRange As Range) As String
+    Dim FruitLoops As Range
+    Dim regEx As New RegExp
+    With regEx
+        .Global = True
+        .MultiLine = True
+        .IgnoreCase = False
+        .Pattern = ""
+    End With
+    For Each FruitLoops In PowerRange
+        regEx.Pattern = FruitLoops.Value
+        If regEx.Test(strInput) Then
+        Set matches = regEx.Execute(strInput)
+        FINDthings = matches(0).Value
+        Exit For
+        Else
+            FINDthings = ""
+        End If
+    Next FruitLoops
+End Function
+
+Public Function Padroniza_Nome(nome As String) As String
+    Padroniza_Nome = Trim(UCase(RemoveEspacoInicio(Acento(nome))))
+End Function
+
+Function RemoveEspacoInicio(caract)
+     
+    'Armazena em temp a string recebida
+    temp = caract
+
+    If Asc(Mid(temp, 1, 1)) = 32 Or Asc(Mid(temp, 1, 1)) = 160 Then
+        For i = 1 To Len(temp)
+            
+             
+             If Asc(Mid(temp, i, 1)) <> 32 And Asc(Mid(temp, i, 1)) <> 160 Then
+                temp = Right(temp, Len(temp) - (i - 1))
+                Exit For
+             End If
+    
+        Next
+    End If
+    'Retorna a nova string
+    RemoveEspacoInicio = temp
+     
+End Function
+
+Function Acento(caract)
+ 
+    'Acentos e caracteres especiais que serão buscados na string
+    'Você pode definir outros caracteres nessa variável, mas
+    ' precisará também colocar a letra correspondente em codiB
+    codiA = "àáâãäèéêëìíîïòóôõöùúûüÀÁÂÃÄÈÉÊËÌÍÎÒÓÔÕÖÙÚÛÜçÇñÑ"
+     
+    'Letras correspondentes para substituição
+    codiB = "aaaaaeeeeiiiiooooouuuuAAAAAEEEEIIIOOOOOUUUUcCnN"
+     
+    'Armazena em temp a string recebida
+    temp = caract
+     
+    'Loop que irá de andará a string letra a letra
+    For i = 1 To Len(temp)
+     
+        'InStr buscará se a letra indice i de temp pertence a
+        ' codiA e se existir retornará a posição dela
+        p = InStr(codiA, Mid(temp, i, 1))
+         
+        'Substitui a letra de indice i em codiA pela sua
+        ' correspondente em codiB
+        If p > 0 Then Mid(temp, i, 1) = Mid(codiB, p, 1)
+    Next
+     
+    'Retorna a nova string
+    Acento = temp
+     
+End Function
+
+Function Merge()
+Application.DisplayAlerts = False
+'
+' Written by Alessandro Araújo
+'
+
+Dim ultimalinha
+Dim x
+Dim y
+y = 9
+x = 9
+Dim primeiro
+Dim segundo
+ultimalinha = Cells(Rows.Count, 2).End(xlUp).Row
+Do While x <= ultimalinha
+    primeiro = Range("B" & x).Value
+    segundo = Range("B" & x + 1).Value
+    
+    If primeiro <> segundo Then
+    Range("B" & y & ":" & "B" & x).Merge
+    y = x + 1
+    End If
+    
+    
+    x = x + 1
+Loop
+End Function
+
+
+
